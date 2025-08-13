@@ -1,6 +1,6 @@
 # Sleeper API Client
 
-A Python client for interacting with the Sleeper Fantasy Football API.
+A clean, well-organized Python client for interacting with the Sleeper Fantasy Football API.
 
 ## Setup
 
@@ -9,7 +9,7 @@ A Python client for interacting with the Sleeper Fantasy Football API.
 pip install -r requirements.txt
 ```
 
-2. Create a `.env` file in the project root with your Sleeper user ID:
+2. Create a `.env` file in the project root with your Sleeper username:
 ```
 SLEEPER_USERNAME=your_username
 ```
@@ -19,18 +19,24 @@ SLEEPER_USERNAME=your_username
 python sleeper_api.py
 ```
 
-### Data Analysis
+## Scripts
 
-The `data_analysis.py` script provides a tool to analyze your mock drafts. It calculates the "value" of each of your picks by comparing the player's draft position to their Average Draft Position (ADP) from Fantasy Football Calculator.
+### sleeper_api.py
+Main API client with both standalone functions and a comprehensive `SleeperAPI` class. Includes:
+- Clean, organized code structure
+- Consistent error handling
+- Example usage demonstrating all features
 
-To run the analysis, you need to provide a mock draft ID as a command-line argument:
+### data_analysis.py
+Interactive draft analysis tool that helps you:
+- Select from your available leagues
+- View your draft position and final team
+- Analyze draft results with detailed player information
 
+Run the analysis interactively:
 ```bash
-# Replace YOUR_DRAFT_ID with the actual ID of your mock draft
-python data_analysis.py YOUR_DRAFT_ID
+python data_analysis.py
 ```
-
-The script will output a summary of the best and worst value picks you made in that draft.
 
 ## Features
 

@@ -1,15 +1,40 @@
+"""Data analysis script for Sleeper Fantasy Football drafts.
+
+This script provides tools to analyze draft results, including:
+- Finding draft positions
+- Getting final team rosters
+- Interactive league selection
+"""
+
 import requests
 from sleeper_api import get_user, get_all_leagues, get_draft_picks, get_all_players
 
 def get_draft_position(draft_picks, user_id):
-    """Finds the draft position for a given user."""
+    """Finds the draft position for a given user.
+    
+    Args:
+        draft_picks (list): List of draft pick dictionaries
+        user_id (str): User ID to find draft position for
+        
+    Returns:
+        int or None: Draft slot number if found, None otherwise
+    """
     for pick in draft_picks:
         if pick.get('picked_by') == user_id:
             return pick.get('draft_slot')
     return None
 
 def get_team(draft_picks, user_id, all_players):
-    """Gets the final team for a given user."""
+    """Gets the final team for a given user.
+    
+    Args:
+        draft_picks (list): List of draft pick dictionaries
+        user_id (str): User ID to get team for
+        all_players (dict): Dictionary of all player information
+        
+    Returns:
+        list: List of player names on the user's team
+    """
     team = []
     for pick in draft_picks:
         if pick.get('picked_by') == user_id:

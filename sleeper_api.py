@@ -1,10 +1,20 @@
+import os
 import requests
+from dotenv import load_dotenv
 
+# Base URL for Sleeper API
 BASE_URL = "https://api.sleeper.app/v1"
 
+# Standalone utility functions for backward compatibility
 def get_user(username):
     """Fetches a user by username."""
     response = requests.get(f"{BASE_URL}/user/{username}")
+    response.raise_for_status()
+    return response.json()
+
+def get_all_leagues(user_id, season):
+    """Fetches all leagues for a user for a given season."""
+    response = requests.get(f"{BASE_URL}/user/{user_id}/leagues/nfl/{season}")
     response.raise_for_status()
     return response.json()
 
@@ -25,9 +35,6 @@ def get_all_players():
     response = requests.get(f"{BASE_URL}/players/nfl")
     response.raise_for_status()
     return response.json()
-import json
-from dotenv import load_dotenv
-import os
 
 class SleeperAPI:
     def __init__(self, username):
@@ -69,12 +76,12 @@ class SleeperAPI:
     def get_rosters(self, league_id):
         """Get rosters for a specific league"""
         url = f"{self.base_url}/league/{league_id}/rosters"
-        return requests.get(url).json()
+        return self._make_request(url)
 
     def get_players(self):
         """Get all NFL players"""
         url = f"{self.base_url}/players/nfl"
-        return requests.get(url).json()
+        return self._make_request(url)
 
     def get_matchup(self, league_id, week):
         """Get matchup results for a specific week"""
@@ -165,20 +172,21 @@ if __name__ == "__main__":
             else:
                 print("\nCould not retrieve league draft information.")
 
-            # --- Get picks for the specific mock draft ID you provided ---
-            specific_draft_id = "1261474618305167360"
-            print(f"\n--- Picks for Specific Mock Draft (ID: {specific_draft_id}) ---")
-            picks = api.get_draft_picks(specific_draft_id)
-            if picks:
-                print(f"Found {len(picks)} picks. Your picks were:")
-                for pick in picks:
-                    if pick['picked_by'] == api.user_id:
-                        player_id = pick['player_id']
-                        player_info = all_players.get(player_id, {})
-                        player_name = player_info.get('full_name', 'Unknown Player')
-                        print(f"  - Pick {pick['pick_no']}: {player_name}")
-            else:
-                print("Could not retrieve picks for the specified mock draft ID.")
+            # --- Example: Get picks for a specific draft ID ---
+            # Replace with your actual draft ID to analyze a specific draft
+            # specific_draft_id = "YOUR_DRAFT_ID_HERE"
+            # print(f"\n--- Picks for Specific Draft (ID: {specific_draft_id}) ---")
+            # picks = api.get_draft_picks(specific_draft_id)
+            # if picks:
+            #     print(f"Found {len(picks)} picks. Your picks were:")
+            #     for pick in picks:
+            #         if pick['picked_by'] == api.user_id:
+            #             player_id = pick['player_id']
+            #             player_info = all_players.get(player_id, {})
+            #             player_name = player_info.get('full_name', 'Unknown Player')
+            #             print(f"  - Pick {pick['pick_no']}: {player_name}")
+            # else:
+            #     print("Could not retrieve picks for the specified draft ID.")
 
         except ValueError as e:
             print(e)
