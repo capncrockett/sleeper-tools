@@ -1,76 +1,81 @@
 import requests
-from sleeper_api import SleeperAPI
-from dotenv import load_dotenv
-import os
+from sleeper_api import get_user, get_all_leagues, get_draft_picks, get_all_players
 
-def get_adp_data(year, scoring='ppr', teams=12):
-    """Fetch ADP data from Fantasy Football Calculator."""
-    url = f"https://fantasyfootballcalculator.com/api/v1/adp/{scoring}?teams={teams}&year={year}"
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-        return {player['name']: player['adp'] for player in response.json()['players']}
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching ADP data: {e}")
-        return None
-
-def analyze_draft_value(draft_picks, adp_data, all_players):
-    """Analyzes the value of each pick in a draft based on ADP."""
-    value_picks = []
+def get_draft_position(draft_picks, user_id):
+    """Finds the draft position for a given user."""
     for pick in draft_picks:
-        player_id = pick['player_id']
-        player_info = all_players.get(player_id, {})
-        player_name = player_info.get('full_name')
+        if pick.get('picked_by') == user_id:
+            return pick.get('draft_slot')
+    return None
 
-        if player_name and player_name in adp_data:
-            adp = adp_data[player_name]
-            pick_number = pick['pick_no']
-            value = adp - pick_number
-            value_picks.append({'name': player_name, 'pick': pick_number, 'adp': adp, 'value': value})
-    
-    return sorted(value_picks, key=lambda x: x['value'], reverse=True)
+def get_team(draft_picks, user_id, all_players):
+    """Gets the final team for a given user."""
+    team = []
+    for pick in draft_picks:
+        if pick.get('picked_by') == user_id:
+            player_id = pick.get('player_id')
+            player_info = all_players.get(player_id, {})
+            first_name = player_info.get('first_name', 'N/A')
+            last_name = player_info.get('last_name', '')
+            team.append(f"{first_name} {last_name}".strip())
+    return team
 
-import argparse
+def main():
+    """Main function to get draft results."""
+    try:
+        username = input("Enter your Sleeper username: ")
+        season = input("Enter the season (e.g., 2024): ")
+
+        user = get_user(username)
+        if not user:
+            print(f"User '{username}' not found.")
+            return
+
+        user_id = user['user_id']
+        print(f"\nFound user '{username}' with ID: {user_id}")
+
+        leagues = get_all_leagues(user_id, season)
+        if not leagues:
+            print(f"No leagues found for user '{username}' in {season}.")
+            return
+
+        print("\nAvailable leagues:")
+        for i, league in enumerate(leagues):
+            print(f"[{i + 1}] {league.get('name', 'N/A')}")
+
+        choice = int(input("\nEnter the number of the league you want to analyze: ")) - 1
+        selected_league = leagues[choice]
+        draft_id = selected_league.get('draft_id')
+
+        if not draft_id:
+            print(f"No draft ID found for league '{selected_league.get('name', 'N/A')}'.")
+            return
+
+        print(f"\nAnalyzing draft for league: {selected_league.get('name', 'N/A')}")
+
+        draft_picks = get_draft_picks(draft_id)
+        all_players = get_all_players()
+
+        draft_position = get_draft_position(draft_picks, user_id)
+        if draft_position:
+            print(f"\nDraft Position: {draft_position}")
+        else:
+            print("\nCould not determine your draft position.")
+
+        final_team = get_team(draft_picks, user_id, all_players)
+        if final_team:
+            print("\nYour Final Team:")
+            for player in final_team:
+                print(f"- {player}")
+        else:
+            print("Could not determine your final team.")
+
+    except requests.exceptions.HTTPError as e:
+        print(f"API Error: {e.response.status_code} - {e.response.text}")
+    except (ValueError, IndexError):
+        print("Invalid selection. Please run the script again.")
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Analyze a Sleeper mock draft for pick value based on ADP.')
-    parser.add_argument('draft_id', help='The ID of the mock draft to analyze.')
-    args = parser.parse_args()
-
-    load_dotenv()
-    username = os.getenv('SLEEPER_USERNAME')
-    if not username:
-        print("SLEEPER_USERNAME not found in .env file.")
-    else:
-        try:
-            api = SleeperAPI(username)
-            all_players = api.get_players()
-            adp_data = get_adp_data(2025)
-
-            if not all_players or not adp_data:
-                raise ValueError("Could not fetch necessary data for analysis.")
-
-            # Analyze the specific mock draft
-            print(f"\n--- Draft Value Analysis for Mock Draft (ID: {args.draft_id}) ---")
-            mock_draft_picks = api.get_draft_picks(args.draft_id)
-
-            if mock_draft_picks:
-                user_picks = [p for p in mock_draft_picks if p['picked_by'] == api.user_id]
-                value_analysis = analyze_draft_value(user_picks, adp_data, all_players)
-
-                if value_analysis:
-                    print("\n--- Best Value Picks (Top 5) ---")
-                    for item in value_analysis[:5]:
-                        print(f"  - {item['name']}: Picked at {item['pick']:.0f}, ADP {item['adp']:.1f} (Value: +{item['value']:.1f})")
-
-                    print("\n--- Worst Value Picks (Bottom 5) ---")
-                    for item in value_analysis[-5:]:
-                        sign = '+' if item['value'] >= 0 else ''
-                        print(f"  - {item['name']}: Picked at {item['pick']:.0f}, ADP {item['adp']:.1f} (Value: {sign}{item['value']:.1f})")
-                else:
-                    print("Could not perform value analysis for your picks.")
-            else:
-                print("Could not retrieve picks for the specified mock draft ID.")
-
-        except (ValueError, Exception) as e:
-            print(e)
+    main()
