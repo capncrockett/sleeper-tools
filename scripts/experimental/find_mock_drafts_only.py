@@ -24,17 +24,16 @@ def find_mock_drafts_only():
         user_id = user['user_id']
         print(f"User: {username} (ID: {user_id})")
         
-        # Search multiple seasons for mock drafts
-        seasons = [2025, 2024, 2023]
+        # Search ONLY 2025 season for mock drafts
+        season = 2025
         all_mock_drafts = []
         
-        for season in seasons:
-            print(f"\nSearching {season} season for mock drafts...")
-            try:
-                drafts = get_all_drafts(user_id, season)
-                if not drafts:
-                    print(f"  No drafts found in {season}")
-                    continue
+        print(f"\nSearching {season} season for mock drafts...")
+        try:
+            drafts = get_all_drafts(user_id, season)
+            if not drafts:
+                print(f"  No drafts found in {season}")
+            else:
                 
                 # Filter for mock drafts only
                 mock_drafts = []

@@ -1,85 +1,58 @@
-# Sleeper API Client
+# Custom Keeper League ADP System
 
-A clean, well-organized Python client for interacting with the Sleeper Fantasy Football API.
+A comprehensive tool for calculating Average Draft Position (ADP) in keeper fantasy football leagues, where standard ADP doesn't account for keepers being off the board.
 
-## Setup
+## 🎯 Core Files
 
-1. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
+- **`mock_draft_tracker.py`** - Main ADP calculation engine
+- **`sleeper_mock_importer.py`** - Sleeper API integration for importing drafts
+- **`import_mock_drafts.py`** - Import specific mock drafts by ID
+- **`sleeper_api.py`** - Core Sleeper API wrapper
+- **`data_analysis.py`** - Draft analysis tools
 
-2. Create a `.env` file in the project root with your Sleeper username:
-```
-SLEEPER_USERNAME=your_username
-```
+## 📊 Generated Data
 
-3. Run the example:
-```bash
-python sleeper_api.py
-```
+- **`eleveners_2025_mock_adp.csv`** - Your custom ADP export
+- **`mock_drafts.json`** - All imported mock draft data
 
-## Scripts
+## 📁 Organization
 
-### sleeper_api.py
-Main API client with both standalone functions and a comprehensive `SleeperAPI` class. Includes:
-- Clean, organized code structure
-- Consistent error handling
-- Example usage demonstrating all features
+- **`docs/`** - Documentation and workflow guides
+- **`scripts/experimental/`** - Various API search attempts
+- **`scripts/utilities/`** - Helper and testing scripts
 
-### data_analysis.py
-Interactive draft analysis tool that helps you:
-- Select from your available leagues
-- View your draft position and final team
-- Analyze draft results with detailed player information
+## 🚀 Quick Start
 
-Run the analysis interactively:
-```bash
-python data_analysis.py
-```
+1. **Set up environment:**
+   ```bash
+   # Create .env file with:
+   SLEEPER_USERNAME=your_username_here
+   ```
 
-## Features
+2. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-- Get user information from a username.
-- Retrieve a user's leagues for a given season.
-- Get rosters and team owners for a specific league.
-- Access complete NFL player data.
-- View matchup results for a league.
-- Fetch all of a user's drafts for a season.
-- Get all picks from a specific draft ID (for league or mock drafts).
+3. **Import mock drafts:**
+   ```bash
+   python3 import_mock_drafts.py
+   ```
 
-## Usage
+4. **Generate ADP:**
+   - System automatically calculates ADP from imported drafts
+   - Exports to CSV for draft day reference
 
-```python
-from sleeper_api import SleeperAPI
+## 📈 Current Status
 
-api = SleeperAPI()
+✅ **5 mock drafts imported** from 11:59ers league  
+✅ **Custom ADP calculated** with variance analysis  
+✅ **CSV export ready** for draft day  
+🔄 **Web interface** - Next phase
 
-# Get user info
-user = api.get_user()
+## 🎯 Key Insights
 
-# Get leagues for current season
-leagues = api.get_leagues("2025")
-
-# Get rosters for a specific league
-rosters = api.get_rosters("league_id")
-
-# Get player information
-players = api.get_players()
-
-# Get matchup results
-matchups = api.get_matchup("league_id", 1)
-
-# Get all drafts for a user
-drafts = api.get_all_drafts("2025")
-
-# Get all picks from a specific draft
-draft_picks = api.get_draft_picks("your_draft_id")
-
-# Get all users in a league (to find team owners)
-users = api.get_league_users("league_id")
-```
-
-## API Documentation
-
-For more information about the Sleeper API endpoints, visit: https://docs.sleeper.com/
+- **Ja'Marr Chase** - ADP 1.6 (most consistent top pick)
+- **Saquon Barkley** - ADP 1.8 (most common 1.01, but variable)
+- **175 players tracked** across 840 total picks
+- **100% draft rate** for top 20 players shows league consistency
