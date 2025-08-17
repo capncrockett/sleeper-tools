@@ -76,3 +76,137 @@ h1 {
   font-weight: 500;
 }
 
+/* View Toggle */
+.view-toggle {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.view-toggle button {
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: #f0f0f0;
+}
+
+.view-toggle button.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+/* Keeper Tool Styles */
+.keeper-tool {
+    padding: 20px;
+}
+
+.teams-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.team-card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 15px;
+    background-color: #f9f9f9;
+}
+
+.team-card h2 {
+    margin-top: 0;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.team-card ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.team-card li {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+}
+
+.team-card input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+/* Draft Board & Generate Button Styles */
+.generate-btn {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  font-size: 1.2em;
+  margin: 20px 0;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.draft-board {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+}
+
+.back-btn {
+  margin-bottom: 20px;
+  padding: 8px 12px;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.keepers-list h2 {
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+}
+
+.keepers-list ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.keepers-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 8px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1.1em;
+}
+
+/* Style for when an item is being dragged */
+.keepers-list li[data-is-dragging="true"] {
+    background-color: #e6f7ff;
+    border-color: #91d5ff;
+}
+
+.remove-btn {
+    padding: 5px 10px;
+    font-size: 0.9em;
+    background-color: #ff4d4f;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.remove-btn:hover {
+    background-color: #d9363e;
+}
+}
+

@@ -19,3 +19,6 @@ __pycache__
 # Data files
 mock_drafts.json
 eleveners_2025_mock_adp.csv
+
+# Node modules
+frontend/node_modules/

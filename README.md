@@ -1,58 +1,75 @@
-# Custom Keeper League ADP System
+# Custom Keeper League ADP System & Draft Tools
 
-A comprehensive tool for calculating Average Draft Position (ADP) in keeper fantasy football leagues, where standard ADP doesn't account for keepers being off the board.
+A comprehensive tool for calculating Average Draft Position (ADP) in keeper fantasy football leagues and providing an interactive keeper draft board.
 
-## 🎯 Core Files
+## ✨ Features
 
-- **`mock_draft_tracker.py`** - Main ADP calculation engine
-- **`sleeper_mock_importer.py`** - Sleeper API integration for importing drafts
-- **`import_mock_drafts.py`** - Import specific mock drafts by ID
-- **`sleeper_api.py`** - Core Sleeper API wrapper
-- **`data_analysis.py`** - Draft analysis tools
+### 1. Custom ADP Calculator
+Calculates ADP in keeper leagues where standard ADP doesn't account for players being kept.
 
-## 📊 Generated Data
-
-- **`eleveners_2025_mock_adp.csv`** - Your custom ADP export
-- **`mock_drafts.json`** - All imported mock draft data
-
-## 📁 Organization
-
-- **`docs/`** - Documentation and workflow guides
-- **`scripts/experimental/`** - Various API search attempts
-- **`scripts/utilities/`** - Helper and testing scripts
+### 2. Interactive Keeper Draft Board
+A web-based tool to help you prepare for your keeper league draft.
+- Fetches your league's rosters from the previous season.
+- Displays player details and their original draft position.
+- Allows you to select which players you think will be kept.
+- Generates a dynamic, editable draft board based on your selections.
+- Supports drag-and-drop reordering of keepers to create your own rankings.
 
 ## 🚀 Quick Start
 
-1. **Set up environment:**
-   ```bash
-   # Create .env file with:
-   SLEEPER_USERNAME=your_username_here
-   ```
+### For the Web Application (Keeper Tool & ADP Viewer)
 
-2. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+1.  **Set up Backend Environment:**
+    - Create a `.env` file in the root directory with your Sleeper username:
+      ```
+      SLEEPER_USERNAME=your_username_here
+      ```
+    - Install Python dependencies:
+      ```bash
+      pip install -r requirements.txt
+      ```
 
-3. **Import mock drafts:**
-   ```bash
-   python3 import_mock_drafts.py
-   ```
+2.  **Set up Frontend Environment:**
+    - Navigate to the `frontend` directory:
+      ```bash
+      cd frontend
+      ```
+    - Install Node.js dependencies:
+      ```bash
+      npm install
+      ```
+    - Go back to the root directory:
+      ```bash
+      cd ..
+      ```
 
-4. **Generate ADP:**
-   - System automatically calculates ADP from imported drafts
-   - Exports to CSV for draft day reference
+3.  **Run the Application:**
+    - **Start the Backend API:** Open a terminal in the root directory and run:
+      ```bash
+      python api.py
+      ```
+    - **Start the Frontend App:** Open a *second* terminal, navigate to `frontend`, and run:
+      ```bash
+      npm run dev
+      ```
+    - Open your browser to the local URL provided (usually `http://localhost:5173`).
 
-## 📈 Current Status
+### For the Command-Line ADP Calculator
 
-✅ **5 mock drafts imported** from 11:59ers league  
-✅ **Custom ADP calculated** with variance analysis  
-✅ **CSV export ready** for draft day  
-🔄 **Web interface** - Next phase
+1.  **Import mock drafts:**
+    ```bash
+    python3 import_mock_drafts.py
+    ```
 
-## 🎯 Key Insights
+2.  **Generate ADP:**
+    - The system automatically calculates ADP from imported drafts.
+    - It exports to `eleveners_2025_mock_adp.csv` for your reference.
 
-- **Ja'Marr Chase** - ADP 1.6 (most consistent top pick)
-- **Saquon Barkley** - ADP 1.8 (most common 1.01, but variable)
-- **175 players tracked** across 840 total picks
-- **100% draft rate** for top 20 players shows league consistency
+## 🎯 Core Files
+
+- **`api.py`** - Flask backend for the web application.
+- **`keeper_tool.py`** - Logic for fetching keeper data.
+- **`mock_draft_tracker.py`** - Main ADP calculation engine.
+- **`sleeper_mock_importer.py`** - Sleeper API integration for importing drafts.
+- **`sleeper_api.py`** - Core Sleeper API wrapper.
+- **`frontend/`** - Contains the React frontend application.
