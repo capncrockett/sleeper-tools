@@ -5,33 +5,46 @@ from sleeper_api import SleeperAPI
 load_dotenv()
 
 def get_keeper_data(user_name, season='2024'):
-    api = SleeperAPI()
+    api = SleeperAPI(user_name)
     user = api.get_user(user_name)
     if not user:
         raise ValueError(f"User '{user_name}' not found.")
 
     user_id = user['user_id']
-    leagues = api.get_user_leagues(user_id, season)
+    leagues = api.get_leagues(season)
     if not leagues:
         raise ValueError(f"No leagues found for user '{user_name}' in the {season} season.")
 
-    # For simplicity, we'll use the first league found.
-    # In a real app, you might let the user select a league.
-    league = leagues[0]
+    # Find the Grundle league specifically
+    league = None
+    for l in leagues:
+        if 'grundle' in l['name'].lower():
+            league = l
+            break
+    
+    if not league:
+        # Fallback to first league if Grundle not found
+        league = leagues[0]
     league_id = league['league_id']
 
     rosters = api.get_rosters(league_id)
-    users_in_league = api.get_users_in_league(league_id)
-    all_players = api.get_all_players()
+    users_in_league = api.get_league_users(league_id)
+    all_players = api.get_players()
 
-    # Find the previous season's draft
-    drafts = api.get_all_drafts_for_league(league_id)
-    previous_season_draft = next((d for d in drafts if d['season'] == str(int(season) - 1)), None)
-    
+    # Try to find draft data from current season first, then previous seasons
     draft_picks = []
-    if previous_season_draft:
-        draft_id = previous_season_draft['draft_id']
-        draft_picks = api.get_draft_picks(draft_id)
+    seasons_to_try = [season, str(int(season) - 1), str(int(season) - 2)]
+    
+    for try_season in seasons_to_try:
+        drafts = api.get_all_drafts(try_season)
+        
+        if drafts:
+            # Use the most recent draft from this season
+            draft = drafts[0]  # Drafts are usually sorted by recency
+            draft_id = draft['draft_id']
+            draft_picks = api.get_draft_picks(draft_id)
+            if draft_picks:
+                break
 
     # Create a map for user_id to display_name
     user_map = {u['user_id']: u['display_name'] for u in users_in_league}
@@ -40,7 +53,13 @@ def get_keeper_data(user_name, season='2024'):
     player_map = {p_id: p_info for p_id, p_info in all_players.items()}
 
     # Create a map for player_id to draft pick info
-    draft_pick_map = {pick['player_id']: {'round': pick['round'], 'pick': pick['pick']} for pick in draft_picks}
+    draft_pick_map = {}
+    for pick in draft_picks:
+        if pick.get('player_id'):
+            draft_pick_map[pick['player_id']] = {
+                'round': pick.get('round', 'N/A'), 
+                'pick': pick.get('pick_no', pick.get('draft_slot', 'N/A'))
+            }
 
     teams_data = []
     for roster in rosters:
