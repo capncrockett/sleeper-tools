@@ -76,12 +76,22 @@ def get_keeper_data(user_name, season='2024'):
             player_info = player_map.get(player_id)
             if player_info:
                 draft_info = draft_pick_map.get(player_id, {'round': 'N/A', 'pick': 'N/A'})
+                # Get better position data for IDP players
+                position = player_info.get('position', 'N/A')
+                # For IDP players, try to get more specific position from fantasy_positions if available
+                if position in ['DL', 'LB', 'DB'] and 'fantasy_positions' in player_info:
+                    # Use the first fantasy position if available as it's often more specific
+                    fantasy_pos = player_info.get('fantasy_positions', [])
+                    if fantasy_pos and len(fantasy_pos) > 0:
+                        position = fantasy_pos[0]
+                
                 player_details_list.append({
                     'id': player_id,
                     'name': player_info.get('full_name', 'Unknown Player'),
-                    'position': player_info.get('position', 'N/A'),
+                    'position': position,
                     'draft_round': draft_info['round'],
-                    'draft_pick': draft_info['pick']
+                    'draft_pick': draft_info['pick'],
+                    'team': player_info.get('team', 'FA')  # Add team info to help identify players
                 })
 
         teams_data.append({

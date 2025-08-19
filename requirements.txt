@@ -1,5 +1,12 @@
-requests
-python-dotenv
-Flask
-Flask-Cors
-statistics
+# Core dependencies
+requests>=2.31.0
+python-dotenv>=1.0.0
+
+# Web framework and API
+Flask>=2.3.0
+Flask-Cors>=4.0.0
+
+# Data processing
+pandas>=2.0.0
+
+# Note: statistics is part of Python standard library since 3.4

@@ -168,26 +168,54 @@ class MockDraftTracker:
             print(f"Warning: Only {len(self.drafts)} drafts available. Recommend at least {min_drafts} for reliable ADP.")
         
         player_picks = defaultdict(list)
+        total_drafts = max(len(self.drafts), 1)  # Avoid division by zero
         
         # Collect all picks for each player
         for draft in self.drafts:
             for pick in draft.picks:
-                player_picks[pick.player_name].append(pick.overall_pick)
+                # Skip any picks with invalid data
+                if pick.player_name and pick.overall_pick > 0:
+                    player_picks[pick.player_name].append(pick.overall_pick)
         
         adp_data = {}
         for player_name, picks in player_picks.items():
-            if len(picks) >= 1:  # At least one draft
-                adp_data[player_name] = {
-                    'player_name': player_name,
-                    'times_drafted': len(picks),
-                    'draft_percentage': (len(picks) / len(self.drafts)) * 100,
-                    'average_pick': round(statistics.mean(picks), 1),
-                    'median_pick': statistics.median(picks),
-                    'earliest_pick': min(picks),
-                    'latest_pick': max(picks),
-                    'std_dev': round(statistics.stdev(picks) if len(picks) > 1 else 0, 1),
-                    'all_picks': sorted(picks)
-                }
+            # Ensure we have valid picks
+            if player_name and len(picks) >= 1:  # At least one draft
+                try:
+                    # Calculate stats with error handling for each metric
+                    average_pick = round(statistics.mean(picks), 1) if picks else 0.0
+                    median_pick = statistics.median(picks) if picks else 0.0
+                    earliest_pick = min(picks) if picks else 0
+                    latest_pick = max(picks) if picks else 0
+                    std_dev = round(statistics.stdev(picks), 1) if len(picks) > 1 else 0.0
+                    draft_percentage = (len(picks) / total_drafts) * 100
+                    
+                    # Create player entry with all values defaulting to numeric values instead of N/A
+                    adp_data[player_name] = {
+                        'player_name': player_name or 'Unknown Player',
+                        'times_drafted': len(picks),
+                        'draft_percentage': draft_percentage,
+                        'average_pick': average_pick,
+                        'median_pick': median_pick,
+                        'earliest_pick': earliest_pick,
+                        'latest_pick': latest_pick,
+                        'std_dev': std_dev,
+                        'all_picks': sorted(picks)
+                    }
+                except Exception as e:
+                    print(f"Warning: Error calculating ADP for {player_name}: {e}")
+                    # Still include the player with default values
+                    adp_data[player_name] = {
+                        'player_name': player_name or 'Unknown Player',
+                        'times_drafted': len(picks),
+                        'draft_percentage': (len(picks) / total_drafts) * 100,
+                        'average_pick': 0.0,
+                        'median_pick': 0.0,
+                        'earliest_pick': 0,
+                        'latest_pick': 0,
+                        'std_dev': 0.0,
+                        'all_picks': sorted(picks)
+                    }
         
         return adp_data
     

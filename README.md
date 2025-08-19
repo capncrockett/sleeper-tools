@@ -20,13 +20,27 @@ A web-based tool to help you prepare for your keeper league draft.
 ### For the Web Application (Keeper Tool & ADP Viewer)
 
 1.  **Set up Backend Environment:**
-    - Create a `.env` file in the root directory with your Sleeper username:
+    
+    - **Create and activate a virtual environment (recommended):**
+      ```bash
+      # Create virtual environment
+      python -m venv venv
+      
+      # Activate it (Windows)
+      source venv/Scripts/activate
+      
+      # Activate it (macOS/Linux)
+      source venv/bin/activate
       ```
-      SLEEPER_USERNAME=your_username_here
-      ```
-    - Install Python dependencies:
+    
+    - **Install Python dependencies:**
       ```bash
       pip install -r requirements.txt
+      ```
+    
+    - **Create a `.env` file** in the root directory with your Sleeper username:
+      ```
+      SLEEPER_USERNAME=your_username_here
       ```
 
 2.  **Set up Frontend Environment:**

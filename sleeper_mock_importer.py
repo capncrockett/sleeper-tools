@@ -63,6 +63,13 @@ class SleeperMockImporter:
             position = player_info.get('position', 'UNK')
             team = player_info.get('team', 'FA')
             
+            # Handle IDP player positions more accurately
+            if position in ['DL', 'LB', 'DB'] and 'fantasy_positions' in player_info:
+                # Use the first fantasy position if available for more specific defensive position
+                fantasy_pos = player_info.get('fantasy_positions', [])
+                if fantasy_pos and len(fantasy_pos) > 0:
+                    position = fantasy_pos[0]
+            
             pick = DraftPick(
                 player_name=player_name,
                 player_id=player_id,
