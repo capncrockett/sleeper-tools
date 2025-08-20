@@ -65,6 +65,8 @@ eleveners_2025_mock_adp.csv
 *_mock_adp.csv
 *_draft_adp.csv
 draftable_players.txt
+grundle_draft_analysis_*.csv
+grundle_draft_analysis_*.json
 
 # Logs and temporary files
 *.log
@@ -76,6 +78,10 @@ server_output.txt
 test_output.txt
 *_test.txt
 *_debug.txt
+
+# Development runner scripts (optional - remove if you want to commit them)
+# start-dev-servers.ps1
+# run-dev.js
 
 # Node.js (Frontend)
 frontend/node_modules/
